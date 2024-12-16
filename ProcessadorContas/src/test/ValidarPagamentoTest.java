@@ -24,7 +24,7 @@ public class ValidarPagamentoTest {
     @Test
     public void PagamentoValidoCartaoCreditoInvalido() {
 
-        ProcessadorContas processador = new ProcessadorContas();
+        ProcessadorDeContas processador = new ProcessadorDeContas();
 
         Date dataPagamento = new Date(System.currentTimeMillis() - 15L * 24 * 60 * 60 * 1000); // 15 dias antes
         Date vencimentoFatura = new Date();
@@ -38,7 +38,7 @@ public class ValidarPagamentoTest {
     @Test
     public void PagamentoValidoBoletoValido() {
 
-        ProcessadorContas processador = new ProcessadorContas();
+        ProcessadorDeContas processador = new ProcessadorDeContas();
 
         Date dataPagamento = new Date();
         Date vencimentoFatura = new Date(System.currentTimeMillis() + 1L * 24 * 60 * 60 * 1000);
@@ -52,7 +52,7 @@ public class ValidarPagamentoTest {
     @Test
     public void PagamentoValidoBoletoInvalido() {
 
-        ProcessadorContas processador = new ProcessadorContas();
+        ProcessadorDeContas processador = new ProcessadorDeContas();
 
         Date dataPagamento = new Date(System.currentTimeMillis() + 1L * 24 * 60 * 60 * 1000);
         Date vencimentoFatura = new Date();

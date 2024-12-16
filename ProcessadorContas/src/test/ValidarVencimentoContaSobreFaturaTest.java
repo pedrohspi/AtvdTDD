@@ -1,39 +1,41 @@
 package test;
 
-import static org.junit.jupiter.api.Assertions.*;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import main.Conta;
 import main.Fatura;
-import main.ProcessadorDeContas;
+import main.ProcessadoDeContas;
+import static org.junit.jupiter.api.Assertions.*;
+import java.util.Date;
+import org.junit.jupiter.api.BeforeEach;
 
-class ProcessadorContasTest {
-
-    private ProcessadorContas processadorContas;
-    private List<Conta> contas;
-    private Fatura fatura;
+public class ValidarVencimentoContaSobreFaturaTest {
+    private ProcessadorDeContas processadorDeContas;
 
     @BeforeEach
     void setUp() {
-        this.processadorDeContas = new ProcessadorContas();
-        this.contas = new ArrayList<>();
-
-        // Alterando os valores passados nas contas
-        this.contas.add(new Conta("001", new Date(16, 12, 2024), 150.00, "CARTAO_CREDITO"));
-        this.contas.add(new Conta("002", new Date(16, 12, 2024), 200.00, "BOLETO"));
-        this.contas.add(new Conta("003", new Date(16, 12, 2024), 50.00, "TRANSFERENCIA_BANCARIA"));
-
-        // Alterando o valor da fatura
-        this.fatura = new Fatura(new Date(16, 12, 2024), 500.00, "Pedro");
+        processadorDeContas = new ProcessadorDeContas();
     }
 
     @Test
-    void quandoProcessamosContasDeUmaFaturaPendente() {
-        this.processadorContas.processarContas(fatura, contas);
+    void testValidarPagamentoFaturaPaga() {
 
-        assertEquals(this.fatura.getStatus(), "PENDENTE");
+        Fatura fatura = new Fatura(new Date(), 100.00, "Usuario 1");
+        Double valorTotalPagar = 150.00;
+
+        processadorDeContas.validarPagamento(valorTotalPagar, fatura);
+
+        assertEquals(StatusPagamento.PAGA, fatura.getStatusPagamento(),
+                "A fatura deve ser marcada como PAGA quando o valor total pago é maior ou igual ao valor da fatura");
+    }
+
+    @Test
+    void testValidarPagamentoFaturaPendente() {
+
+        Fatura fatura = new Fatura(new Date(), 100.00, "Usuario 1");
+        Double valorTotalPagar = 50.00;
+
+        processadorDeContas.validarPagamento(valorTotalPagar, fatura);
+
+        assertEquals(StatusPagamento.PENDENTE, fatura.getStatusPagamento(),
+                "A fatura deve ser marcada como PENDENTE quando o valor total pago é menor que o valor da fatura");
     }
 }
