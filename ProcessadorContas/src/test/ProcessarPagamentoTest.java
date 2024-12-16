@@ -1,34 +1,29 @@
 package test;
 
 import org.junit.jupiter.api.Test;
-import main.Conta;
-import main.Pagamento;
-import main.ProcessadorContas;
-import main.TipoPagamento;
+import main.ProcessadorDeContas;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Date;
 
 public class ProcessarPagamentoTest {
-    private ProcessadorContas processadorContas;
+    private ProcessadorDeContas processadorDeContas;
     private Date dataPagamento;
 
     @BeforeEach
     void setUp() {
-        processadorContas = new ProcessadorContas();
+        processadorDeContas = new ProcessadorDeContas();
         dataPagamento = new Date();
     }
 
     @Test
-    void testRealizarPagamentoBoletoPagoAposVencimento() {
-        // Arrange
-        Date dataVencimento = new Date(dataPagamento.getTime() - (1000 * 60 * 60 * 24 * 1)); // 1 dia atrás
+    void RealizarPagamentoBoletoPagoAposVencimento() {
+
+        Date dataVencimento = new Date(dataPagamento.getTime() - (1000 * 60 * 60 * 24 * 1));
         Conta conta = new Conta("001", dataVencimento, 100.00, TipoPagamento.BOLETO);
 
-        // Act
         Pagamento pagamento = processadorContas.realizarPagamento(conta, dataPagamento);
 
-        // Assert
         assertNotNull(pagamento, "Pagamento não deve ser nulo");
 
         Double valorEsperado = 110.00;
@@ -41,15 +36,13 @@ public class ProcessarPagamentoTest {
     }
 
     @Test
-    void testRealizarPagamentoBoletoPagoAntesDoVencimento() {
-        // Arrange
+    void RealizarPagamentoBoletoPagoAntesDoVencimento() {
+
         Date dataVencimento = new Date(dataPagamento.getTime() + (1000 * 60 * 60 * 24 * 1));
         Conta conta = new Conta("001", dataVencimento, 100.00, TipoPagamento.BOLETO);
 
-        // Act
-        Pagamento pagamento = processadorContas.realizarPagamento(conta, dataPagamento);
+        Pagamento pagamento = processadorDeContas.realizarPagamento(conta, dataPagamento);
 
-        // Assert
         assertNotNull(pagamento, "Pagamento não deve ser nulo");
         double valorEsperado = 100.00;
         double margemErro = 0.01;
@@ -59,15 +52,13 @@ public class ProcessarPagamentoTest {
     }
 
     @Test
-    void testRealizarPagamentoCartaoDeCreditoComoTipoDePagamento() {
-        // Arrange
+    void RealizarPagamentoCartaoDeCreditoComoTipoDePagamento() {
+
         Date dataVencimento = new Date();
         Conta conta = new Conta("001", dataVencimento, 100.00, TipoPagamento.CARTAO_CREDITO);
 
-        // Act
-        Pagamento pagamento = processadorContas.realizarPagamento(conta, dataPagamento);
+        Pagamento pagamento = processadorDeContas.realizarPagamento(conta, dataPagamento);
 
-        // Assert
         assertNotNull(pagamento, "Pagamento não deve ser nulo");
         double valorEsperado = 100.00;
         double margemErro = 0.01;
@@ -78,15 +69,13 @@ public class ProcessarPagamentoTest {
     }
 
     @Test
-    void testRealizarPagamentoTransferenciaComoTipoDePagamento() {
-        // Arrange
-        Date dataVencimento = new Date(); // Data atual
+    void RealizarPagamentoTransferenciaComoTipoDePagamento() {
+
+        Date dataVencimento = new Date();
         Conta conta = new Conta("001", dataVencimento, 100.00, TipoPagamento.TRANSFERENCIA_BANCARIA);
 
-        // Act
-        Pagamento pagamento = processadorContas.realizarPagamento(conta, dataPagamento);
+        Pagamento pagamento = processadorDeContas.realizarPagamento(conta, dataPagamento);
 
-        // Assert
         assertNotNull(pagamento, "Pagamento não deve ser nulo");
         double valorEsperado = 100.00;
         double margemErro = 0.01;
