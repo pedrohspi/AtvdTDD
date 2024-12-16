@@ -10,7 +10,7 @@ import main.Conta;
 import main.Fatura;
 import main.ProcessadorDeContas;
 
-class ProcessadorContasTest {
+class ProcessadorDeContasTest {
 
 	private ProcessadorDeContas processadorDeContas;
 	private List<Conta> contas;
@@ -31,5 +31,17 @@ class ProcessadorContasTest {
 		this.processadorDeContas.processarContas(fatura, contas);
 
 		assertEquals(StatusPagamento.PAGA, this.fatura.getStatusPagamento());
+	}
+
+	
+	@Test
+	void ProcessandoContasDeUmaFataturaPendente() {
+
+		this.fatura = new Fatura(new Date(16, 12, 2024), 300.00, "José");
+		
+		this.processadorDeContas.processarContas(fatura, contas);
+		
+		assertEquals(StatusPagamento.PENDENTE, this.fatura.getStatusPagamento());
+	}
 	}
 }
