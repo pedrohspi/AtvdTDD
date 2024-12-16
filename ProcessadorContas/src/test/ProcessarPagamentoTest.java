@@ -1,7 +1,10 @@
 package test;
 
 import org.junit.jupiter.api.Test;
+import main.Conta;
+import main.Pagamento;
 import main.ProcessadorDeContas;
+import main.TipoPagamento;
 import org.junit.jupiter.api.BeforeEach;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Date;
@@ -22,7 +25,7 @@ public class ProcessarPagamentoTest {
         Date dataVencimento = new Date(dataPagamento.getTime() - (1000 * 60 * 60 * 24 * 1));
         Conta conta = new Conta("001", dataVencimento, 100.00, TipoPagamento.BOLETO);
 
-        Pagamento pagamento = processadorContas.realizarPagamento(conta, dataPagamento);
+        Pagamento pagamento = processadorDeContas.realizarPagamento(conta, dataPagamento);
 
         assertNotNull(pagamento, "Pagamento não deve ser nulo");
 

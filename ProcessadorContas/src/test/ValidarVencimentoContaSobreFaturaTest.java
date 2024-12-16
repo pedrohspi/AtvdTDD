@@ -2,7 +2,8 @@ package test;
 
 import org.junit.jupiter.api.Test;
 import main.Fatura;
-import main.ProcessadoDeContas;
+import main.ProcessadorDeContas;
+import main.StatusPagamento;
 import static org.junit.jupiter.api.Assertions.*;
 import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;

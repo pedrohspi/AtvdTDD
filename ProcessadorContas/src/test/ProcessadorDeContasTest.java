@@ -9,6 +9,8 @@ import org.junit.jupiter.api.Test;
 import main.Conta;
 import main.Fatura;
 import main.ProcessadorDeContas;
+import main.StatusPagamento;
+import main.TipoPagamento;
 
 class ProcessadorDeContasTest {
 
