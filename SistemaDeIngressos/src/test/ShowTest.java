@@ -3,8 +3,7 @@ package test;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import main.Tier;
-import main.Show;
+import main.*;
 
 import java.util.ArrayList;
 import java.util.Calendar;
