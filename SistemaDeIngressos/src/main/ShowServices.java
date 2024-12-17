@@ -26,31 +26,30 @@ public class ShowServices {
         if (descontoLote < 0 || descontoLote > 25)
             throw new IllegalArgumentException("Desconto inválidos");
 
-        List<LoteModel> loteModels = criarLotes(quantLotes, quantIngressosPorLote, precoNormal, descontoLote,
-                vip / 100);
+        List<Tier> tiers = criarLotes(quantLotes, quantIngressosPorLote, precoNormal, descontoLote, vip / 100);
         if (isDataEspecial) {
             totalDespesas *= 1.15;
         }
-        Show showModel = new ShowModel(date, artista, cache, totalDespesas, loteModels, isDataEspecial);
-        showRepository.save(showModel);
+        Show show = new Show(date, artista, cache, totalDespesas, tiers, isDataEspecial);
+        showRepository.save(show);
     }
 
-    private List<LoteModel> criarLotes(Integer quantLotes, Integer quantIngressosPorLote, Double precoNormal,
+    private List<Tier> criarLotes(Integer quantLotes, Integer quantIngressosPorLote, Double precoNormal,
             Double descontoLote, Double vip) {
-        List<LoteModel> loteModels = new ArrayList<>();
+        List<Tier> tiers = new ArrayList<>();
         descontoLote = ajustarDesconto(descontoLote);
 
         for (int i = 0; i < quantLotes; i++) {
-            List<TicketModel> ticketModels = criarIngressos(quantIngressosPorLote, precoNormal, vip, descontoLote);
-            LoteModel loteModel = new LoteModel(descontoLote, ticketModels, loteId++);
-            loteModels.add(loteModel);
+            List<Ticket> tickets = criarIngressos(quantIngressosPorLote, precoNormal, vip, descontoLote);
+            Tier tier = new Tier(descontoLote, tickets, loteId++);
+            tiers.add(tier);
         }
-        return loteModels;
+        return tiers;
     }
 
-    private List<TicketModel> criarIngressos(Integer quantIngressosPorLote, Double precoBase, Double vip,
+    private List<Ticket> criarIngressos(Integer quantIngressosPorLote, Double precoBase, Double vip,
             Double descontoLote) {
-        List<TicketModel> ticketModels = new ArrayList<>();
+        List<Ticket> tickets = new ArrayList<>();
 
         int expectedVip = (int) Math.round(quantIngressosPorLote * vip);
         int expectedMeiaEntrada = (int) Math.round(quantIngressosPorLote * 0.10);
@@ -61,17 +60,17 @@ public class ShowServices {
         double precoVip = (precoBase * 2) - (2 * precoBase * descontoLote / 100);
         double precoNormal = precoBase - (precoBase * descontoLote / 100);
 
-        adicionarIngressos(ticketModels, expectedVip, TicketTypeEnum.VIP, precoVip);
-        adicionarIngressos(ticketModels, expectedMeiaEntrada, TicketTypeEnum.MEIA_ENTRADA, precoBase * 0.5);
-        adicionarIngressos(ticketModels, expectedNormal, TicketTypeEnum.NORMAL, precoNormal);
+        adicionarIngressos(tickets, expectedVip, TicketTypeEnum.VIP, precoVip);
+        adicionarIngressos(tickets, expectedMeiaEntrada, TicketTypeEnum.MEIA_ENTRADA, precoBase * 0.5);
+        adicionarIngressos(tickets, expectedNormal, TicketTypeEnum.NORMAL, precoNormal);
 
-        return ticketModels;
+        return tickets;
     }
 
-    private void adicionarIngressos(List<TicketModel> ticketModels, int quantidade, TicketTypeEnum tipo, Double preco) {
+    private void adicionarIngressos(List<Ticket> tickets, int quantidade, TicketTypeEnum tipo, Double preco) {
         for (int i = 0; i < quantidade; i++) {
-            TicketModel ticketModel = new TicketModel(currentIngressoId++, tipo, false, preco);
-            ticketModels.add(ticketModel);
+            Ticket ticket = new Ticket(currentIngressoId++, tipo, false, preco);
+            tickets.add(ticket);
         }
     }
 
@@ -83,39 +82,39 @@ public class ShowServices {
         return descontoLote;
     }
 
-    public TicketModel comprarIngresso(Date date, String artista, Long idLote, TicketTypeEnum tipo) {
-        ShowModel showModel = showRepository.findById(date, artista)
+    public Ticket comprarIngresso(Date date, String artista, Long idLote, TicketTypeEnum tipo) {
+        Show show = showRepository.findById(date, artista)
                 .orElseThrow(() -> new IllegalArgumentException("Show não encontrado"));
 
-        LoteModel lote = showModel.getLotes().stream()
+        Tier tier = show.getLotes().stream()
                 .filter(l -> l.getId().equals(idLote))
                 .findFirst()
                 .orElseThrow(() -> new IllegalArgumentException("Lote não encontrado"));
 
-        return lote.getIngressos().stream()
-                .filter(ticket -> !ticket.isVendido() && (tipo == null || ticket.getTipoIngresso().equals(tipo)))
+        return tier.getTickets().stream()
+                .filter(ticket -> !ticket.isSold() && (tipo == null || ticket.getTicketType().equals(tipo)))
                 .findFirst()
                 .map(ticket -> {
-                    ticket.setVendido(true);
+                    ticket.setSold(null);(true);
                     return ticket;
                 })
                 .orElseThrow(() -> new IllegalStateException("Nenhum ingresso disponível para o lote"));
     }
 
-    public ReportModel criarReport(Date date, String artista) {
-        ShowModel showModel = showRepository.findById(date, artista)
+    public Report criarReport(Date date, String artista) {
+        Show show = showRepository.findById(date, artista)
                 .orElseThrow(() -> new IllegalArgumentException("Show não encontrado"));
 
-        ReportModel report = new ReportModel();
+        Report report = new Report();
         Double totalValue = 0.00;
         int[] totalTicketsSold = new int[TicketTypeEnum.values().length];
 
-        for (LoteModel loteModel : showModel.getLotes()) {
-            for (TicketModel ticketModel : loteModel.getIngressos()) {
-                if (ticketModel.isVendido()) {
-                    TicketTypeEnum tipo = ticketModel.getTipoIngresso();
+        for (Tier tier : show.getLotes()) {
+            for (Ticket ticket : tier.getTickets()) {
+                if (ticket.isSold()) {
+                    TicketTypeEnum tipo = ticket.getTicketType();
                     totalTicketsSold[tipo.ordinal()]++;
-                    totalValue += ticketModel.getValor();
+                    totalValue += ticket.getValor();
                 }
             }
         }
@@ -123,9 +122,9 @@ public class ShowServices {
         report.setNumTicketMeia(totalTicketsSold[TicketTypeEnum.MEIA_ENTRADA.ordinal()]);
         report.setNumTicketNormal(totalTicketsSold[TicketTypeEnum.NORMAL.ordinal()]);
         report.setNumTicketVip(totalTicketsSold[TicketTypeEnum.VIP.ordinal()]);
-        report.setTotalValue(totalValue);
+        report.setValueTotal(totalValue);
 
-        Double totalCost = showModel.getDespesasInfra() + showModel.getCache();
+        Double totalCost = show.getDespesasInfra() + show.getCache();
         if (totalValue < totalCost) {
             report.setStatus(StatusEnum.PREJUÍZO);
         } else if (totalValue > totalCost) {
