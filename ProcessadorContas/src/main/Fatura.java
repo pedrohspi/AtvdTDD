@@ -3,31 +3,42 @@ package main;
 import java.util.Date;
 
 public class Fatura {
-    private String numeroFatura;
-    private Date dataPagamento;
-    private Double valorPago;
-    private String metodoPagamento;
+    private String nomeDevedor;
+    private Date dataVencimento;
+    private Double valor;
+    private StatusPagamento statusPagamento;
 
-    public Fatura(String numeroFatura, Date dataPagamento, double valorPago, String metodoPagamento) {
-        this.numeroFatura = numeroFatura;
-        this.dataPagamento = dataPagamento;
-        this.valorPago = valorPago;
-        this.metodoPagamento = metodoPagamento;
+    public Fatura(Date dataPagamento, double valor,String nomeDevedor) {
+        this.nomeDevedor = nomeDevedor;
+        this.dataVencimento = dataPagamento;
+        this.valor = valor;
     }
 
-    public String getNumeroFatura() {
-        return this.numeroFatura;
+    public String getNomeDevedor() {
+        return this.nomeDevedor;
     }
 
-    public Date getDataPagamento() {
-        return this.dataPagamento;
+    public Date getDataVencimento() {
+        return this.dataVencimento;
     }
+    
+	public void setDataVencimento(Date dataVencimento) {
+		this.dataVencimento = dataVencimento;
+	}
 
-    public Double getValorPago() {
-        return this.valorPago;
-    }
+	public StatusPagamento getStatusPagamento() {
+		return statusPagamento;
+	}
 
-    public String getMetodoPagamento() {
-        return this.metodoPagamento;
-    }
+	public void setStatusPagamento(StatusPagamento statusPagamento) {
+		this.statusPagamento = statusPagamento;
+	}
+
+	public Double getValor() {
+		return valor;
+	}
+
+	public void setValor(Double valor) {
+		this.valor = valor;
+	}
 }

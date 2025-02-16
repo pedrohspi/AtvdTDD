@@ -22,10 +22,10 @@ public class ProcessadorDeContas {
     }
 
     public void validarPagamento(Double valorTotalPagar, Fatura fatura) {
-        if (valorTotalPagar >= fatura.getValorFatura()) {
-            fatura.setStatus(StatusPagamento.PAGA);
+        if (valorTotalPagar >= fatura.getValor()) {
+            fatura.setStatusPagamento(StatusPagamento.PAGA);
         } else {
-            fatura.setStatus(StatusPagamento.PENDENTE);
+            fatura.setStatusPagamento(StatusPagamento.PENDENTE);
         }
     }
 
