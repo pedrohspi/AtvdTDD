@@ -23,7 +23,7 @@ public class ProcessarPagamentoTest {
     void RealizarPagamentoBoletoPagoAposVencimento() {
 
         Date dataVencimento = new Date(dataPagamento.getTime() - (1000 * 60 * 60 * 24 * 1));
-        Conta conta = new Conta("001", dataVencimento, 100.00, TipoPagamento.BOLETO);
+        Conta conta = new Conta("001", dataVencimento, 100, TipoPagamento.BOLETO);
 
         Pagamento pagamento = processadorDeContas.realizarPagamento(conta, dataPagamento);
 

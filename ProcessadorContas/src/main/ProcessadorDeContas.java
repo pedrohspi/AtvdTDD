@@ -33,22 +33,30 @@ public class ProcessadorDeContas {
         if (pagamento.getTipoPagamento().equals(TipoPagamento.CARTAO_CREDITO)) {
             Long diasEmSegundos = Math.abs(vencimentoFatura.getTime() - pagamento.getDataPagamento().getTime());
             Long dias = diasEmSegundos / (1000 * 60 * 60 * 24);
-            return dias > 15;
+            return dias <= 15;
         } else {
-            return !pagamento.getDataPagamento().after(vencimentoFatura);
+            return true;
         }
     }
 
+    
     public Pagamento realizarPagamento(Conta conta, Date dataPagamento) {
-        Double valorPago = conta.getValorPago();
+        try {
+            Double valorPago = conta.getValorPago();
 
-        if (conta.getTipoPagamento().equals(TipoPagamento.BOLETO)) {
-            if (dataPagamento.after(conta.getData())) {
-                valorPago *= 1.1;
+            if (conta.getTipoPagamento().equals(TipoPagamento.BOLETO)) {
+                if (valorPago < 0.01 || valorPago > 5000) {
+                    throw new IllegalArgumentException("Valor do pagamento fora do intervalo permitido para BOLETO");
+                }
+                if (dataPagamento.after(conta.getData())) {
+                    valorPago *= 1.1; 
+                }
             }
+            return new Pagamento(valorPago, new Date(), conta.getTipoPagamento());
+
+        } catch (IllegalArgumentException e) {
+            System.out.println("Erro: " + e.getMessage());
+            return null;
         }
-
-        return new Pagamento(valorPago, new Date(), conta.getTipoPagamento());
     }
-
 }
