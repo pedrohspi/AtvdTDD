@@ -111,6 +111,336 @@ class FunctionalTests {
         this.processadorDeContas.processarContas(f, c);
         assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
     }
+    
+    
+    //Suíte de testes para tabela de decisão
+    // TRANSFERENCIA_BANCARIA 
+    @Test
+    void R1() {
+    	List<Conta> c = new ArrayList<>();
+    	c.add(new Conta("001", convertToDate(LocalDate.of(2024, 12, 24)), 2000.00, TipoPagamento.TRANSFERENCIA_BANCARIA));
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 12, 24)), 1000.00, "Pedro");
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PAGA, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R2() {
+    	List<Conta> c = new ArrayList<>();
+    	c.add(new Conta("001", convertToDate(LocalDate.of(2024, 12, 24)), 200.00, TipoPagamento.TRANSFERENCIA_BANCARIA));
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 24)), 1000.00, "Pedro");
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R3() {
+    	List<Conta> c = new ArrayList<>();
+    	c.add(new Conta("001", convertToDate(LocalDate.of(2024, 12, 24)), 2000.00, TipoPagamento.TRANSFERENCIA_BANCARIA));
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 24)), 1000.00, "Pedro");
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R4() {
+    	List<Conta> c = new ArrayList<>();
+    	c.add(new Conta("001", convertToDate(LocalDate.of(2024, 12, 24)), 2000.00, TipoPagamento.TRANSFERENCIA_BANCARIA));
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 24)), 3000.00, "Pedro");
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    // CARTAO_CREDITO
+    
+    @Test
+    void R5() {
+    	List<Conta> c = new ArrayList<>();
+    	c.add(new Conta("001", convertToDate(LocalDate.of(2024, 12, 8)), 2000.00, TipoPagamento.CARTAO_CREDITO));
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 12, 24)), 1000.00, "Pedro");
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PAGA, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R6() {
+    	List<Conta> c = new ArrayList<>();
+    	c.add(new Conta("001", convertToDate(LocalDate.of(2024, 12, 11)), 200.00, TipoPagamento.CARTAO_CREDITO));
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 24)), 1000.00, "Pedro");
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R7() {
+    	List<Conta> c = new ArrayList<>();
+    	c.add(new Conta("001", convertToDate(LocalDate.of(2024, 12, 24)), 2000.00, TipoPagamento.CARTAO_CREDITO));
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 10)), 1000.00, "Pedro");
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R8() {
+    	List<Conta> c = new ArrayList<>();
+    	c.add(new Conta("001", convertToDate(LocalDate.of(2024, 12, 24)), 2000.00, TipoPagamento.CARTAO_CREDITO));
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 9)), 3000.00, "Pedro");
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    //BOLETO
+    @Test
+    void R9() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 30)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+        Conta conta = new Conta("001",convertToDate(LocalDate.of(2024, 7, 9)),
+                1100.00, TipoPagamento.BOLETO);
+        c.add(conta);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PAGA, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R10() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	Conta conta = new Conta("001",convertToDate(LocalDate.of(2024, 7, 28)),
+                1100.00, TipoPagamento.BOLETO);
+    	c.add(conta);
+    	this.processadorDeContas.processarContas(f, c);
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,29)),
+                -1100.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PAGA, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R11() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 30)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	this.processadorDeContas.processarContas(f, c);
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7, 30)),
+                1000.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PAGA, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R12() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,29)),
+                900.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R13() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,29)),
+                900.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R14() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,29)),
+                -900.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R15() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,27)),
+                800.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R16() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	Conta conta = new Conta("001",convertToDate(LocalDate.of(2024, 7, 28)),
+                900.00, TipoPagamento.BOLETO);
+    	c.add(conta);
+    	this.processadorDeContas.processarContas(f, c);
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,27)),
+               -90.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R17() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	Conta conta = new Conta("001",convertToDate(LocalDate.of(2024, 7, 28)),
+                900.00, TipoPagamento.BOLETO);
+    	c.add(conta);
+    	this.processadorDeContas.processarContas(f, c);
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,30)),
+               100.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PAGA, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R18() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	Conta conta = new Conta("001",convertToDate(LocalDate.of(2024, 7, 28)),
+                1000.00, TipoPagamento.BOLETO);
+    	c.add(conta);
+    	this.processadorDeContas.processarContas(f, c);
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,30)),
+               -100.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PAGA, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R19() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	Conta conta = new Conta("001",convertToDate(LocalDate.of(2024, 7, 28)),
+                1000.00, TipoPagamento.BOLETO);
+    	c.add(conta);
+    	this.processadorDeContas.processarContas(f, c);
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,29)),
+               100.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PAGA, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R20() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	Conta conta = new Conta("001",convertToDate(LocalDate.of(2024, 7, 28)),
+                1000.00, TipoPagamento.BOLETO);
+    	c.add(conta);
+    	this.processadorDeContas.processarContas(f, c);
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,29)),
+               -100.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PAGA, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R21() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	Conta conta = new Conta("001",convertToDate(LocalDate.of(2024, 7, 28)),
+                100.00, TipoPagamento.BOLETO);
+    	c.add(conta);
+    	this.processadorDeContas.processarContas(f, c);
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,29)),
+               1.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R22() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	Conta conta = new Conta("001",convertToDate(LocalDate.of(2024, 7, 28)),
+                100.00, TipoPagamento.BOLETO);
+    	c.add(conta);
+    	this.processadorDeContas.processarContas(f, c);
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,29)),
+               -1.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    @Test
+    void R23() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 1000.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	Conta conta = new Conta("001",convertToDate(LocalDate.of(2024, 7, 28)),
+                100.00, TipoPagamento.BOLETO);
+    	c.add(conta);
+    	this.processadorDeContas.processarContas(f, c);
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,30)),
+               1.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    
+    @Test
+    void R24() {
+    	Fatura f = new Fatura(convertToDate(LocalDate.of(2024, 7, 28)), 400.00, "Pedro");
+    	List<Conta> c = new ArrayList<>();
+    	
+    	Conta conta = new Conta("001",convertToDate(LocalDate.of(2024, 7, 28)),
+                100.00, TipoPagamento.BOLETO);
+    	c.add(conta);
+    	this.processadorDeContas.processarContas(f, c);
+    	
+        Conta co = new Conta("001",convertToDate(LocalDate.of(2024, 7,30)),
+               -1.00, TipoPagamento.BOLETO);
+        c.add(co);
+        this.processadorDeContas.processarContas(f, c);
+        assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
+    }
+    
+    
+    
+    
 
 }
 
