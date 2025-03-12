@@ -437,11 +437,5 @@ class FunctionalTests {
         c.add(co);
         this.processadorDeContas.processarContas(f, c);
         assertEquals(StatusPagamento.PENDENTE, f.getStatusPagamento());
-    }
-    
-    
-    
-    
-
+    } 
 }
-
