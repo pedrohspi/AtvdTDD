@@ -1,6 +1,6 @@
 package main;
 
-public enum TicketTypeEnum {
+public enum TipoIngressoeEnum {
     VIP,
     NORMAL,
     MEIA_ENTRADA

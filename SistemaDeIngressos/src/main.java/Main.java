@@ -1,6 +1,6 @@
-package main;
+package br.edu.ufcg.ccc.vv;
 
-import main.*;
+import br.edu.ufcg.ccc.vv.controller.ConsoleMenuController;
 
 public class Main {
     public static void main(String[] args) {

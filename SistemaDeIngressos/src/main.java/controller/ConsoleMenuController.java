@@ -1,6 +1,11 @@
-package main;
+package br.edu.ufcg.ccc.vv.controller;
 
-import main.*;
+import br.edu.ufcg.ccc.vv.models.IngressoModel;
+import br.edu.ufcg.ccc.vv.models.RelatorioModel;
+import br.edu.ufcg.ccc.vv.models.TipoIngressoEnum;
+import br.edu.ufcg.ccc.vv.repository.ShowRepositoryImpl;
+import br.edu.ufcg.ccc.vv.services.ShowServices;
+
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.Date;
@@ -77,8 +82,7 @@ public class ConsoleMenuController {
         System.out.print("Percentual VIP (20 a 30): ");
         Double vip = scanner.nextDouble();
 
-        showServices.criarShow(date, artista, cache, totalDespesas, quantLotes, quantIngressosPorLote, precoNormal,
-                isDataEspecial, descontoLote, vip);
+        showServices.criarShow(date, artista, cache, totalDespesas, quantLotes, quantIngressosPorLote, precoNormal, isDataEspecial, descontoLote, vip);
         System.out.println("Show criado com sucesso!");
     }
 
@@ -94,10 +98,10 @@ public class ConsoleMenuController {
         Long idLote = scanner.nextLong();
 
         System.out.print("Tipo de Ingresso (VIP, NORMAL, MEIA_ENTRADA): ");
-        TicketTypeEnum tipo = TicketTypeEnum.valueOf(scanner.next().toUpperCase());
+        TipoIngressoEnum tipo = TipoIngressoEnum.valueOf(scanner.next().toUpperCase());
 
         try {
-            |Ticket ingresso = showServices.comprarIngresso(date, artista, idLote, tipo);
+            IngressoModel ingresso = showServices.comprarIngresso(date, artista, idLote, tipo);
             System.out.println("Ingresso comprado com sucesso: " + ingresso.toString());
         } catch (Exception e) {
             System.out.println("Erro ao comprar ingresso: " + e.getMessage());
@@ -113,12 +117,12 @@ public class ConsoleMenuController {
         String artista = scanner.nextLine();
 
         try {
-            Report relatorio = showServices.criarReport(date, artista);
+            RelatorioModel relatorio = showServices.criarRelatorio(date, artista);
             System.out.println("Relatório criado com sucesso:");
-            System.out.println("Ingressos Meia Entrada: " + relatorio.getNumTicketMeia());
-            System.out.println("Ingressos Normal: " + relatorio.getNumTicketNormal());
-            System.out.println("Ingressos VIP: " + relatorio.getNumTicketVip());
-            System.out.println("Valor Total: " + relatorio.getValueTotal());
+            System.out.println("Ingressos Meia Entrada: " + relatorio.getNumIngressoMeia());
+            System.out.println("Ingressos Normal: " + relatorio.getNumIngressoNormal());
+            System.out.println("Ingressos VIP: " + relatorio.getNumIngressoVip());
+            System.out.println("Valor Total: " + relatorio.getValorTotal());
             System.out.println("Status: " + relatorio.getStatus());
         } catch (Exception e) {
             System.out.println("Erro ao criar relatório: " + e.getMessage());
