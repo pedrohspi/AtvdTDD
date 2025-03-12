@@ -9,7 +9,6 @@ import java.util.Date;
 import org.junit.jupiter.api.BeforeEach;
 
 public class ValidarVencimentoContaSobreFaturaTest {
-	
     private ProcessadorDeContas processadorDeContas;
 
     @BeforeEach
